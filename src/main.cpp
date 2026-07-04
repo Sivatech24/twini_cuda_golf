@@ -178,6 +178,13 @@ int main(int argc, char* argv[]) {
     }
 
     SDL_DestroyRenderer(renderer);
+    SDL_DestroyTexture(texLogo);
+    SDL_DestroyTexture(texBall);
+    SDL_DestroyTexture(texHole);
+    SDL_DestroyTexture(texBg);
+    SDL_DestroyTexture(texTileLight);
+    TTF_CloseFont(mainFont);
+    TTF_Quit();
     SDL_DestroyWindow(window);
     IMG_Quit();
     SDL_Quit();
