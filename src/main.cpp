@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include "level_gen.cuh"
+#include <SDL_ttf.h>
 
 enum GameState { STATE_LOGO, STATE_MENU, STATE_LOADING, STATE_PLAYING, STATE_GAMEOVER };
 
