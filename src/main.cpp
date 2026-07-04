@@ -23,6 +23,29 @@ int main(int argc, char* argv[]) {
     SDL_Window* window = SDL_CreateWindow("Twini Cuda Golf", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
+// Initialize SDL_ttf
+    if (TTF_Init() == -1) {
+        std::cerr << "TTF_Init Error: " << TTF_GetError() << std::endl;
+        return 1;
+    }
+
+    // Load Font
+    TTF_Font* mainFont = TTF_OpenFont("res/font/font.ttf", 28);
+    if (!mainFont) {
+        std::cerr << "Failed to load font! " << TTF_GetError() << std::endl;
+    }
+
+    // Load Textures
+    SDL_Texture* texLogo = IMG_LoadTexture(renderer, "res/gfx/logo.png");
+    SDL_Texture* texBall = IMG_LoadTexture(renderer, "res/gfx/ball.png");
+    SDL_Texture* texHole = IMG_LoadTexture(renderer, "res/gfx/hole.png");
+    SDL_Texture* texBg = IMG_LoadTexture(renderer, "res/gfx/bg.png");
+    SDL_Texture* texTileLight = IMG_LoadTexture(renderer, "res/gfx/tile32_light.png");
+    
+    if (!texLogo || !texBall || !texHole) {
+        std::cerr << "Failed to load one or more textures! " << IMG_GetError() << std::endl;
+    }
+
     GameState state = STATE_LOGO;
     Uint32 logoStartTime = SDL_GetTicks();
     
