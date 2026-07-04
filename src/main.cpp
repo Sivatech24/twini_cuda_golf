@@ -130,7 +130,12 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(renderer);
 
         if (state == STATE_LOGO) {
-            // Draw logo image (Load using IMG_LoadTexture in setup)
+            // Draw background first
+            SDL_RenderCopy(renderer, texBg, NULL, NULL);
+            
+            // Draw logo in the center (assuming logo is ~400x200, adjust as needed)
+            SDL_Rect logoRect = {200, 200, 400, 200};
+            SDL_RenderCopy(renderer, texLogo, NULL, &logoRect);
         } 
         else if (state == STATE_MENU) {
             // Draw text: "Press 1 (Easy), 2 (Medium), 3 (Hard) to Play, ESC to Quit"
