@@ -25,3 +25,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 # CUDA architecture (Adjust based on your GPU)
 set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "75;80;86")
+
+# Copy the 'res' folder to the build directory so the executable can find the assets
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res
+)
