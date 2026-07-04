@@ -147,22 +147,22 @@ int main(int argc, char* argv[]) {
             SDL_RenderFillRect(renderer, &loadBar);
         }
         else if (state == STATE_PLAYING) {
-            // Draw Hole
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_Rect holeRect = {(int)currentLevel.holePos.x - 10, (int)currentLevel.holePos.y - 10, 20, 20};
-            SDL_RenderFillRect(renderer, &holeRect);
+            // 1. Draw Grass Background
+            SDL_RenderCopy(renderer, texBg, NULL, NULL);
 
-            // Draw Obstacles
-            SDL_SetRenderDrawColor(renderer, 100, 50, 0, 255);
+            // 2. Draw Hole
+            SDL_Rect holeRect = {(int)currentLevel.holePos.x - 16, (int)currentLevel.holePos.y - 16, 32, 32};
+            SDL_RenderCopy(renderer, texHole, NULL, &holeRect);
+
+            // 3. Draw Obstacles (Using tile32_light.png)
             for (auto& obs : currentLevel.obstacles) {
                 SDL_Rect r = {(int)obs.x, (int)obs.y, (int)obs.width, (int)obs.height};
-                SDL_RenderFillRect(renderer, &r);
+                SDL_RenderCopy(renderer, texTileLight, NULL, &r);
             }
 
-            // Draw Ball
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            SDL_Rect ballRect = {(int)playerBall.pos.x - 5, (int)playerBall.pos.y - 5, 10, 10};
-            SDL_RenderFillRect(renderer, &ballRect);
+            // 4. Draw Ball
+            SDL_Rect ballRect = {(int)playerBall.pos.x - 8, (int)playerBall.pos.y - 8, 16, 16};
+            SDL_RenderCopy(renderer, texBall, NULL, &ballRect);
 
             // Draw Aiming Line & Cursor
             if (!playerBall.isMoving) {
