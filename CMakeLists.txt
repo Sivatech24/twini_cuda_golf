@@ -47,11 +47,17 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory 
         ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res
     
-    # Copy DLLs out of the /lib/x64 directories directly to where the execution happens
+    # Copy Core DLLs
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         "C:/sdl/SDL2-2.30.8/lib/x64/SDL2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         "C:/sdl/SDL2_ttf-2.24.0/lib/x64/SDL2_ttf.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "C:/sdl/SDL2_image-devel-2.8.8-VC/lib/x64/SDL2_image.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/
+        "C:/sdl/SDL2_image-2.8.8/lib/x64/SDL2_image.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/ # <-- FIXED THIS PATH
+        
+    # Copy SDL2_image Optional Format DLLs
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        "C:/sdl/SDL2_image-2.8.8/lib/x64/optional/libwebp-7.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/ # <-- FIXED THIS PATH
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        "C:/sdl/SDL2_image-2.8.8/lib/x64/optional/libwebpdemux-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/ # <-- FIXED THIS PATH
 )
