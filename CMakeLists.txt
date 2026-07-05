@@ -14,7 +14,7 @@ if(WIN32)
         "C:/sdl/SDL2-2.30.8"               
         "C:/sdl/SDL2_ttf-2.24.0"
         "C:/sdl/SDL2_image-2.8.8" 
-        "C:/sdl/SDL2_mixer-2.8.0" # <-- NEW: Path to your Mixer folder
+        "C:\sdl\SDL2_mixer-2.8.0" # <-- NEW: Path to your Mixer folder
     )
 endif()
 

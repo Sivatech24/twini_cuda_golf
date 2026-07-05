@@ -200,6 +200,9 @@ SDL2_DIR:PATH=C:/sdl/SDL2-2.30.8/cmake
 //The directory containing a CMake configuration file for SDL2_image.
 SDL2_image_DIR:PATH=C:/sdl/SDL2_image-2.8.8/cmake
 
+//The directory containing a CMake configuration file for SDL2_mixer.
+SDL2_mixer_DIR:PATH=SDL2_mixer_DIR-NOTFOUND
+
 //The directory containing a CMake configuration file for SDL2_ttf.
 SDL2_ttf_DIR:PATH=C:/sdl/SDL2_ttf-2.24.0/cmake
 
