@@ -76,8 +76,9 @@ bool VerifyLevelSolvableCUDA(const LevelData& level, int difficultyStrokes) {
 LevelData GenerateAndVerifyLevel(int difficultyStrokes) {
     LevelData level;
     bool isSolvable = false;
+    int attempts = 0; // Prevent infinite loop freezing
     
-    while (!isSolvable) {
+    while (!isSolvable && attempts < 50) {
         level.obstacles.clear();
         level.startPos = {100.0f, 300.0f};
         level.holePos = {700.0f, 300.0f};
@@ -95,6 +96,12 @@ LevelData GenerateAndVerifyLevel(int difficultyStrokes) {
 
         // Offload to GPU to verify if this random layout can actually be beaten
         isSolvable = VerifyLevelSolvableCUDA(level, difficultyStrokes);
+        attempts++;
+    }
+    
+    // If it failed 50 times, give the player an empty level to prevent locking up
+    if (!isSolvable) {
+        level.obstacles.clear(); 
     }
     
     return level;
