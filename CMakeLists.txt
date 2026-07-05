@@ -8,7 +8,7 @@ if(WIN32)
     list(APPEND CMAKE_PREFIX_PATH 
         "C:/sdl/SDL2-2.30.8"               # Your new layout path
         "C:/sdl/SDL2_ttf-2.24.0"
-        "C:/sdl/SDL2_image-devel-2.8.8-VC" # Your updated development package path
+        "C:/sdl/SDL2_image-2.8.8" # Your updated development package path
     )
 endif()
 
