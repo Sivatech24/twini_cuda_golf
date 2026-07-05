@@ -3,12 +3,12 @@ project(TwiniCudaGolf LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# 1. Tell CMake exactly where your SDL folders are located
+# 1. Point to your exact layout inside C:/sdl
 if(WIN32)
     list(APPEND CMAKE_PREFIX_PATH 
-        "C:/sdl/SDL2-devel-2.32.10-VC"
+        "C:/sdl/SDL2-2.30.8"               # Your new layout path
         "C:/sdl/SDL2_ttf-2.24.0"
-        "C:/sdl/SDL2_image-2.8.2-VC" # IMPORTANT: Add your SDL2_image folder here
+        "C:/sdl/SDL2_image-devel-2.8.8-VC" # Your updated development package path
     )
 endif()
 
@@ -33,7 +33,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     SDL2_image::SDL2_image
 )
 
-# Set CUDA Architecture (75=Turing, 80=Ampere, 86=Ada. Adjust if needed)
+# Set CUDA Architecture (75=Turing, 80=Ampere, 86=Ada)
 set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "75;80;86")
 
 # 5. Automatically copy Assets and DLLs to the build folder so the game runs
@@ -42,13 +42,11 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory 
         ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res
     
-    # Copy DLLs
+    # Copy DLLs out of the /lib/x64 directories directly to where the execution happens
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "C:/sdl/SDL2-devel-2.32.10-VC/lib/x64/SDL2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/
+        "C:/sdl/SDL2-2.30.8/lib/x64/SDL2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         "C:/sdl/SDL2_ttf-2.24.0/lib/x64/SDL2_ttf.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/
-    
-    # IMPORTANT: Update this path to match your SDL2_image version!
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "C:/sdl/SDL2_image-2.8.2-VC/lib/x64/SDL2_image.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/
+        "C:/sdl/SDL2_image-devel-2.8.8-VC/lib/x64/SDL2_image.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/
 )
