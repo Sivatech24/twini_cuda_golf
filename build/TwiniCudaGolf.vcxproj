@@ -148,7 +148,11 @@ if %errorlevel% neq 0 goto :cmEnd
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_ttf-2.24.0/lib/x64/SDL2_ttf.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/Debug/
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-devel-2.8.8-VC/lib/x64/SDL2_image.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/Debug/
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/SDL2_image.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/Debug/
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/optional/libwebp-7.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/Debug/
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/optional/libwebpdemux-2.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/Debug/
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -242,7 +246,11 @@ if %errorlevel% neq 0 goto :cmEnd
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_ttf-2.24.0/lib/x64/SDL2_ttf.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/Release/
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-devel-2.8.8-VC/lib/x64/SDL2_image.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/Release/
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/SDL2_image.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/Release/
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/optional/libwebp-7.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/Release/
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/optional/libwebpdemux-2.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/Release/
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -336,7 +344,11 @@ if %errorlevel% neq 0 goto :cmEnd
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_ttf-2.24.0/lib/x64/SDL2_ttf.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/MinSizeRel/
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-devel-2.8.8-VC/lib/x64/SDL2_image.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/MinSizeRel/
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/SDL2_image.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/MinSizeRel/
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/optional/libwebp-7.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/MinSizeRel/
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/optional/libwebpdemux-2.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/MinSizeRel/
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -429,7 +441,11 @@ if %errorlevel% neq 0 goto :cmEnd
 if %errorlevel% neq 0 goto :cmEnd
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_ttf-2.24.0/lib/x64/SDL2_ttf.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/RelWithDebInfo/
 if %errorlevel% neq 0 goto :cmEnd
-"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-devel-2.8.8-VC/lib/x64/SDL2_image.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/RelWithDebInfo/
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/SDL2_image.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/RelWithDebInfo/
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/optional/libwebp-7.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/RelWithDebInfo/
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/sdl/SDL2_image-2.8.8/lib/x64/optional/libwebpdemux-2.dll C:/Users/tech/Documents/Projects/twini_cuda_golf/build/RelWithDebInfo/
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone

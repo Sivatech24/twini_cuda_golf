@@ -2,6 +2,7 @@
 #include <SDL_image.h>
 #include <iostream>
 #include <cmath>
+#include <string>
 #include "level_gen.cuh"
 #include <SDL_ttf.h>
 
@@ -23,24 +24,26 @@ int main(int argc, char* argv[]) {
     SDL_Window* window = SDL_CreateWindow("Twini Cuda Golf", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-// Initialize SDL_ttf
     if (TTF_Init() == -1) {
         std::cerr << "TTF_Init Error: " << TTF_GetError() << std::endl;
         return 1;
     }
 
+    // BULLETPROOF ASSET PATHS
+    char* basePath = SDL_GetBasePath();
+    std::string resPath = basePath ? std::string(basePath) + "res/" : "res/";
+    if (basePath) SDL_free(basePath);
+
     // Load Font
-    TTF_Font* mainFont = TTF_OpenFont("res/font/font.ttf", 28);
-    if (!mainFont) {
-        std::cerr << "Failed to load font! " << TTF_GetError() << std::endl;
-    }
+    TTF_Font* mainFont = TTF_OpenFont((resPath + "font/font.ttf").c_str(), 28);
+    if (!mainFont) std::cerr << "Failed to load font! " << TTF_GetError() << std::endl;
 
     // Load Textures
-    SDL_Texture* texLogo = IMG_LoadTexture(renderer, "res/gfx/logo.png");
-    SDL_Texture* texBall = IMG_LoadTexture(renderer, "res/gfx/ball.png");
-    SDL_Texture* texHole = IMG_LoadTexture(renderer, "res/gfx/hole.png");
-    SDL_Texture* texBg = IMG_LoadTexture(renderer, "res/gfx/bg.png");
-    SDL_Texture* texTileLight = IMG_LoadTexture(renderer, "res/gfx/tile32_light.png");
+    SDL_Texture* texLogo = IMG_LoadTexture(renderer, (resPath + "gfx/logo.png").c_str());
+    SDL_Texture* texBall = IMG_LoadTexture(renderer, (resPath + "gfx/ball.png").c_str());
+    SDL_Texture* texHole = IMG_LoadTexture(renderer, (resPath + "gfx/hole.png").c_str());
+    SDL_Texture* texBg = IMG_LoadTexture(renderer, (resPath + "gfx/bg.png").c_str());
+    SDL_Texture* texTileLight = IMG_LoadTexture(renderer, (resPath + "gfx/tile32_light.png").c_str());
     
     if (!texLogo || !texBall || !texHole) {
         std::cerr << "Failed to load one or more textures! " << IMG_GetError() << std::endl;
@@ -51,7 +54,7 @@ int main(int argc, char* argv[]) {
     
     Ball playerBall;
     LevelData currentLevel;
-    int selectedDifficulty = 1; // 1: Easy, 2: Medium, 3: Hard
+    int selectedDifficulty = 1;
 
     bool running = true;
     SDL_Event event;
@@ -61,7 +64,6 @@ int main(int argc, char* argv[]) {
             if (event.type == SDL_QUIT) running = false;
 
             if (state == STATE_MENU) {
-                // Simplified Menu Input
                 if (event.type == SDL_KEYDOWN) {
                     if (event.key.keysym.sym == SDLK_1) { selectedDifficulty = 1; state = STATE_LOADING; }
                     if (event.key.keysym.sym == SDLK_2) { selectedDifficulty = 2; state = STATE_LOADING; }
@@ -70,20 +72,17 @@ int main(int argc, char* argv[]) {
                 }
             } 
             else if (state == STATE_PLAYING && !playerBall.isMoving) {
-                // Gameplay Mechanics: Aiming and Power
                 int mx, my;
                 SDL_GetMouseState(&mx, &my);
                 playerBall.aimAngle = atan2(my - playerBall.pos.y, mx - playerBall.pos.x);
 
                 if (event.type == SDL_MOUSEWHEEL) {
-                    // Set power forwards/backwards
                     playerBall.powerSetting += event.wheel.y * 5.0f; 
                     if(playerBall.powerSetting < 10.0f) playerBall.powerSetting = 10.0f;
                     if(playerBall.powerSetting > 150.0f) playerBall.powerSetting = 150.0f;
                 }
                 
                 if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
-                    // Shoot ball
                     playerBall.vel.x = cos(playerBall.aimAngle) * playerBall.powerSetting;
                     playerBall.vel.y = sin(playerBall.aimAngle) * playerBall.powerSetting;
                     playerBall.isMoving = true;
@@ -97,9 +96,6 @@ int main(int argc, char* argv[]) {
             if (SDL_GetTicks() - logoStartTime > 3000) state = STATE_MENU;
         } 
         else if (state == STATE_LOADING) {
-            // Loading Screen Update: Offload to CUDA to generate and verify
-            // Note: In a true production app, you'd run this on a separate thread 
-            // so the SDL renderer can draw the loading bar animating.
             currentLevel = GenerateAndVerifyLevel(selectedDifficulty);
             
             playerBall.pos = currentLevel.startPos;
@@ -110,61 +106,64 @@ int main(int argc, char* argv[]) {
             state = STATE_PLAYING;
         }
         else if (state == STATE_PLAYING && playerBall.isMoving) {
-            // Apply Physics CPU-side for the actual gameplay
             playerBall.pos.x += playerBall.vel.x * 0.016f;
             playerBall.pos.y += playerBall.vel.y * 0.016f;
             
-            playerBall.vel.x *= 0.98f; // Friction
+            playerBall.vel.x *= 0.98f;
             playerBall.vel.y *= 0.98f;
             
             if (abs(playerBall.vel.x) < 2.0f && abs(playerBall.vel.y) < 2.0f) {
-                playerBall.isMoving = false; // Ball stopped
+                playerBall.isMoving = false;
                 if (playerBall.strokesTaken >= currentLevel.maxStrokes) {
-                    state = STATE_GAMEOVER; // Loss condition
+                    state = STATE_GAMEOVER;
                 }
             }
         }
 
         // --- RENDERING ---
-        SDL_SetRenderDrawColor(renderer, 50, 150, 50, 255); // Grass green
+        SDL_SetRenderDrawColor(renderer, 50, 150, 50, 255);
         SDL_RenderClear(renderer);
 
         if (state == STATE_LOGO) {
-            // Draw background first
             SDL_RenderCopy(renderer, texBg, NULL, NULL);
-            
-            // Draw logo in the center (assuming logo is ~400x200, adjust as needed)
             SDL_Rect logoRect = {200, 200, 400, 200};
             SDL_RenderCopy(renderer, texLogo, NULL, &logoRect);
         } 
         else if (state == STATE_MENU) {
-            // Draw text: "Press 1 (Easy), 2 (Medium), 3 (Hard) to Play, ESC to Quit"
+            SDL_RenderCopy(renderer, texBg, NULL, NULL);
+            
+            // DRAW THE MENU TEXT
+            if (mainFont) {
+                SDL_Color textColor = {255, 255, 255, 255};
+                SDL_Surface* textSurf = TTF_RenderText_Solid(mainFont, "Press 1 (Easy), 2 (Med), 3 (Hard)", textColor);
+                if (textSurf) {
+                    SDL_Texture* textTex = SDL_CreateTextureFromSurface(renderer, textSurf);
+                    SDL_Rect textRect = { 400 - (textSurf->w / 2), 300 - (textSurf->h / 2), textSurf->w, textSurf->h };
+                    SDL_RenderCopy(renderer, textTex, NULL, &textRect);
+                    SDL_FreeSurface(textSurf);
+                    SDL_DestroyTexture(textTex);
+                }
+            }
         } 
         else if (state == STATE_LOADING) {
-            // Draw loading bar
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_Rect loadBar = {200, 280, 400, 40};
             SDL_RenderFillRect(renderer, &loadBar);
         }
         else if (state == STATE_PLAYING) {
-            // 1. Draw Grass Background
             SDL_RenderCopy(renderer, texBg, NULL, NULL);
 
-            // 2. Draw Hole
             SDL_Rect holeRect = {(int)currentLevel.holePos.x - 16, (int)currentLevel.holePos.y - 16, 32, 32};
             SDL_RenderCopy(renderer, texHole, NULL, &holeRect);
 
-            // 3. Draw Obstacles (Using tile32_light.png)
             for (auto& obs : currentLevel.obstacles) {
                 SDL_Rect r = {(int)obs.x, (int)obs.y, (int)obs.width, (int)obs.height};
                 SDL_RenderCopy(renderer, texTileLight, NULL, &r);
             }
 
-            // 4. Draw Ball
             SDL_Rect ballRect = {(int)playerBall.pos.x - 8, (int)playerBall.pos.y - 8, 16, 16};
             SDL_RenderCopy(renderer, texBall, NULL, &ballRect);
 
-            // Draw Aiming Line & Cursor
             if (!playerBall.isMoving) {
                 SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
                 int lineEndX = playerBall.pos.x + cos(playerBall.aimAngle) * playerBall.powerSetting;
@@ -174,7 +173,7 @@ int main(int argc, char* argv[]) {
         }
 
         SDL_RenderPresent(renderer);
-        SDL_Delay(16); // ~60 FPS
+        SDL_Delay(16);
     }
 
     SDL_DestroyRenderer(renderer);
