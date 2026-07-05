@@ -1,10 +1,112 @@
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
-#include <cmath>
-#include <string>
-#include "level_gen.cuh"
-#include <SDL_ttf.h>
+#include <vector>
+
+#include "RenderWindow.h"
+#include "Entity.h"
+#include "Ball.h"	
+#include "Tile.h"
+#include "Hole.h"
+#include "level_gen.cuh" // <-- WE INCLUDE CUDA HERE
+
+bool init()
+{
+	if (SDL_Init(SDL_INIT_VIDEO) > 0)
+		std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
+	if (!(IMG_Init(IMG_INIT_PNG)))
+		std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
+	if (!(TTF_Init()))
+		std::cout << "TTF_init has failed. Error: " << SDL_GetError() << std::endl;
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+	return true;
+}
+
+bool SDLinit = init();
+
+RenderWindow window("Twini-Golf", 640, 480);
+
+// Load Textures
+SDL_Texture* ballTexture = window.loadTexture("res/gfx/ball.png");
+SDL_Texture* holeTexture = window.loadTexture("res/gfx/hole.png");
+SDL_Texture* pointTexture = window.loadTexture("res/gfx/point.png");
+SDL_Texture* tileDarkTexture32 = window.loadTexture("res/gfx/tile32_dark.png");
+SDL_Texture* ballShadowTexture = window.loadTexture("res/gfx/ball_shadow.png");
+SDL_Texture* bgTexture = window.loadTexture("res/gfx/bg.png");
+SDL_Texture* uiBgTexture = window.loadTexture("res/gfx/UI_bg.png");
+SDL_Texture* levelTextBgTexture = window.loadTexture("res/gfx/levelText_bg.png");
+SDL_Texture* powerMeterTexture_FG = window.loadTexture("res/gfx/powermeter_fg.png");
+SDL_Texture* powerMeterTexture_BG = window.loadTexture("res/gfx/powermeter_bg.png");
+SDL_Texture* powerMeterTexture_overlay = window.loadTexture("res/gfx/powermeter_overlay.png");
+SDL_Texture* logoTexture = window.loadTexture("res/gfx/logo.png");
+SDL_Texture* click2start = window.loadTexture("res/gfx/click2start.png");
+SDL_Texture* endscreenOverlayTexture = window.loadTexture("res/gfx/end.png");
+SDL_Texture* splashBgTexture = window.loadTexture("res/gfx/splashbg.png");
+
+Mix_Chunk* chargeSfx = Mix_LoadWAV("res/sfx/charge.mp3");
+Mix_Chunk* swingSfx = Mix_LoadWAV("res/sfx/swing.mp3");
+Mix_Chunk* holeSfx = Mix_LoadWAV("res/sfx/hole.mp3");
+
+SDL_Color white = { 255, 255, 255 };
+SDL_Color black = { 0, 0, 0 };
+TTF_Font* font32 = TTF_OpenFont("res/font/font.ttf", 32);
+TTF_Font* font48 = TTF_OpenFont("res/font/font.ttf", 48);
+TTF_Font* font24 = TTF_OpenFont("res/font/font.ttf", 24);
+
+Ball balls[2] = {Ball(Vector2f(0, 0), ballTexture, pointTexture, powerMeterTexture_FG, powerMeterTexture_BG, 0), Ball(Vector2f(0, 0), ballTexture, pointTexture, powerMeterTexture_FG, powerMeterTexture_BG, 1)};
+std::vector<Hole> holes = {Hole(Vector2f(0, 0), holeTexture), Hole(Vector2f(0, 0), holeTexture)};
+
+// Create an empty tiles vector. We NO LONGER use loadTiles()
+std::vector<Tile> tiles;
+
+int level = 0;
+bool gameRunning = true;
+bool mouseDown = false;
+bool mousePressed = false;
+bool swingPlayed = false;
+bool secondSwingPlayed = false;
+
+SDL_Event event;
+int state = 0; //0 = title screen, 1 = game, 2 = end screen
+Uint64 currentTick = SDL_GetPerformanceCounter();
+Uint64 lastTick = 0;
+double deltaTime = 0;
+
+void loadLevel(int current_level_idx)
+{
+	// Instead of a limit, let's make it infinite procedural golf!
+    
+	balls[0].setVelocity(0, 0);
+	balls[1].setVelocity(0,0);
+    balls[0].setScale(1, 1);
+	balls[1].setScale(1, 1);
+	balls[0].setWin(false);
+	balls[1].setWin(false);
+
+    // 1. CLEAR OLD TILES AND GENERATE NEW ONES VIA CUDA
+    tiles.clear();
+    LevelData genData = GenerateAndVerifyLevel(3);
+
+    // 2. SETUP PLAYER 1 (Left Screen)
+    balls[0].setPos(genData.startPos.x, genData.startPos.y);
+    holes.at(0).setPos(genData.holePos.x, genData.holePos.y);
+
+    for (const auto& obs : genData.obstacles) {
+        // Map CUDA obstacles directly into C++ OOP Tiles
+        tiles.push_back(Tile(Vector2f(obs.x, obs.y), tileDarkTexture32));
+    }
+
+    // 3. SETUP PLAYER 2 (Right Screen)
+    float rightOffset = 320.0f; // Shift everything to the right half
+    balls[1].setPos(genData.startPos.x + rightOffset, genData.startPos.y);
+    holes.at(1).setPos(genData.holePos.x + rightOffset, genData.holePos.y);
+
+    for (const auto& obs : genData.obstacles) {
+        tiles.push_back(Tile(Vector2f(obs.x + rightOffset, obs.y), tileDarkTexture32));
+    }
+}
 
 enum GameState { STATE_LOGO, STATE_MENU, STATE_LOADING, STATE_PLAYING, STATE_GAMEOVER };
 
