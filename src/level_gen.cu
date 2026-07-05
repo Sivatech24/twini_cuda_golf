@@ -1,6 +1,7 @@
 #include "level_gen.cuh"
 #include <curand_kernel.h>
 #include <iostream>
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #define NUM_SIMULATIONS 10000 
