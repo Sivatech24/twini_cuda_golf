@@ -3,6 +3,11 @@ project(TwiniCudaGolf LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# Add this right below CMAKE_CXX_STANDARD
+if(MSVC)
+    add_compile_definitions(_USE_MATH_DEFINES)
+endif()
+
 # 1. Point to your exact layout inside C:/sdl
 if(WIN32)
     list(APPEND CMAKE_PREFIX_PATH 

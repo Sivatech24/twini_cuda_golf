@@ -1,0 +1,10 @@
+^C:\USERS\TECH\DOCUMENTS\PROJECTS\TWINI_CUDA_GOLF\BUILD\CMAKEFILES\D7E664FBE29EA7B0CA32823B1E68E2A5\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/tech/Documents/Projects/twini_cuda_golf -BC:/Users/tech/Documents/Projects/twini_cuda_golf/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/tech/Documents/Projects/twini_cuda_golf/build/TwiniCudaGolf.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
